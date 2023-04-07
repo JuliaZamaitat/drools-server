@@ -21,15 +21,14 @@ public class ClientController {
     private AddressRepository addressRepository;
 
 
-    @PostMapping(path = "/test")
+    @PostMapping(path = "/add")
     public ResponseEntity<?> addNewClient(@RequestBody Client client) {
-//        Address billingAddress = client.getBillingAddress();
-//        if (billingAddress != null) {
-//            addressRepository.save(billingAddress);
-//        }
-//        Client savedClient = clientRepository.save(client);
-//        return new ResponseEntity<>(savedClient, HttpStatus.CREATED);
-        return new ResponseEntity<>("ok", HttpStatus.OK);
+        Address billingAddress = client.getBillingAddress();
+        if (billingAddress != null) {
+            addressRepository.save(billingAddress);
+        }
+        Client savedClient = clientRepository.save(client);
+        return new ResponseEntity<>(savedClient, HttpStatus.CREATED);
     }
 
 

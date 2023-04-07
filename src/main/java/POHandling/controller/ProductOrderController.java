@@ -33,8 +33,7 @@ public class ProductOrderController {
     public ResponseEntity<?> addProductOrder(@RequestBody ProductOrder productOrder,
                                              @RequestParam(required = false) Integer clientId,
                                              @RequestParam(required = false) Integer deliveryAddressId,
-                                             @RequestParam(required = false) List<Integer> itemIds,
-                                             @RequestBody(required = false) Map<Integer, Integer> itemQuantities) {
+                                             @RequestParam(required = false) List<Integer> itemIds){
 
         Date currentDate = new Date();
         productOrder.setOrderDate(currentDate);
@@ -65,12 +64,6 @@ public class ProductOrderController {
                 if (itemOptional.isPresent()) {
                     Item item = itemOptional.get();
                     item.setProductOrder(productOrder); // Set the ProductOrder field in each Item object
-
-                    if (itemQuantities != null && itemQuantities.containsKey(itemId)) {
-                        int quantity = itemQuantities.get(itemId);
-                        productOrder.getItemsQuantity().put(item, quantity); // Set the quantity for each item in the ProductOrder
-                    }
-
                     items.add(item);
                 } else {
                     return new ResponseEntity<>("Item not found", HttpStatus.BAD_REQUEST);

@@ -22,10 +22,6 @@ public class ProductOrder {
     private List<Item> items;
     private Date orderDate;
     private Date orderProcessDate;
-    @ElementCollection
-    @MapKeyJoinColumn(name = "item_id")
-    @Column(name = "quantity")
-    private Map<Item, Integer> itemsQuantity;
 
     public Integer getId() {
         return id;
@@ -75,13 +71,6 @@ public class ProductOrder {
         this.orderProcessDate = orderProcessDate;
     }
 
-    public Map<Item, Integer> getItemsQuantity() {
-        return itemsQuantity;
-    }
-
-    public void setItemsQuantity(Map<Item, Integer> itemsQuantity) {
-        this.itemsQuantity = itemsQuantity;
-    }
 }
 
 
