@@ -1,9 +1,11 @@
 package POHandling.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 public class ProductOrder {
@@ -16,18 +18,14 @@ public class ProductOrder {
     @JoinColumn(name = "delivery_address_id")
     private Address deliveryAddress;
     @OneToMany(mappedBy = "productOrder")
+    @JsonIgnoreProperties("productOrder")
     private List<Item> items;
     private Date orderDate;
     private Date orderProcessDate;
-
-    public Date getOrderProcessDate() {
-        return orderProcessDate;
-    }
-
-    public void setOrderProcessDate(Date orderProcessDate) {
-        this.orderProcessDate = orderProcessDate;
-    }
-
+    @ElementCollection
+    @MapKeyJoinColumn(name = "item_id")
+    @Column(name = "quantity")
+    private Map<Item, Integer> itemsQuantity;
 
     public Integer getId() {
         return id;
@@ -68,5 +66,22 @@ public class ProductOrder {
     public void setOrderDate(Date orderDate) {
         this.orderDate = orderDate;
     }
+
+    public Date getOrderProcessDate() {
+        return orderProcessDate;
+    }
+
+    public void setOrderProcessDate(Date orderProcessDate) {
+        this.orderProcessDate = orderProcessDate;
+    }
+
+    public Map<Item, Integer> getItemsQuantity() {
+        return itemsQuantity;
+    }
+
+    public void setItemsQuantity(Map<Item, Integer> itemsQuantity) {
+        this.itemsQuantity = itemsQuantity;
+    }
 }
+
 

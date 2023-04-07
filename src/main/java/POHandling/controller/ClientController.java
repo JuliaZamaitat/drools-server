@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -21,20 +20,23 @@ public class ClientController {
     @Autowired
     private AddressRepository addressRepository;
 
+
+    @PostMapping(path = "/test")
+    public ResponseEntity<?> addNewClient(@RequestBody Client client) {
+//        Address billingAddress = client.getBillingAddress();
+//        if (billingAddress != null) {
+//            addressRepository.save(billingAddress);
+//        }
+//        Client savedClient = clientRepository.save(client);
+//        return new ResponseEntity<>(savedClient, HttpStatus.CREATED);
+        return new ResponseEntity<>("ok", HttpStatus.OK);
+    }
+
+
     @GetMapping(path = "/all")
     public ResponseEntity<Iterable<Client>> getAllClients() {
         Iterable<Client> clients = clientRepository.findAll();
         return new ResponseEntity<>(clients, HttpStatus.OK);
-    }
-
-    @PostMapping(path = "/add")
-    public ResponseEntity<Client> addNewClient(@RequestBody Client client) {
-        Address billingAddress = client.getBillingAddress();
-        if (billingAddress != null) {
-            addressRepository.save(billingAddress);
-        }
-        Client savedClient = clientRepository.save(client);
-        return new ResponseEntity<>(savedClient, HttpStatus.CREATED);
     }
 
     @GetMapping(path = "/{id}")
