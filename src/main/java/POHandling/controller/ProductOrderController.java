@@ -29,18 +29,18 @@ public class ProductOrderController {
 
     @Autowired
     private ItemRepository itemRepository;
-
     @PostMapping(path = "/add")
     public ResponseEntity<?> addProductOrder(@RequestBody ProductOrder productOrder,
-                                                @RequestParam(required = false) Integer clientId,
-                                                @RequestParam(required = false) Integer deliveryAddressId) {
+                                             @RequestParam(required = false) Integer clientId,
+                                             @RequestParam(required = false) Integer deliveryAddressId,
+                                             @RequestParam(required = false) List<Integer> itemIds){
 
-        productOrder.setOrderDate(productOrder.getOrderDate());
+        Date currentDate = new Date();
+        productOrder.setOrderDate(currentDate);
         productOrder.setOrderProcessDate(productOrder.getOrderProcessDate());
 
         if (clientId != null) {
             Optional<Client> clientOptional = clientRepository.findById(clientId);
-            System.out.println(clientOptional);
             if (clientOptional.isPresent()) {
                 productOrder.setClient(clientOptional.get());
             } else {
@@ -57,14 +57,24 @@ public class ProductOrderController {
             }
         }
 
-        if (productOrder.getItems() != null) {
-            productOrder.setItems(productOrder.getItems());
+        if (itemIds != null) {
+            List<Item> items = new ArrayList<>();
+            for (Integer itemId : itemIds) {
+                Optional<Item> itemOptional = itemRepository.findById(itemId);
+                if (itemOptional.isPresent()) {
+                    Item item = itemOptional.get();
+                    item.setProductOrder(productOrder); // Set the ProductOrder field in each Item object
+                    items.add(item);
+                } else {
+                    return new ResponseEntity<>("Item not found", HttpStatus.BAD_REQUEST);
+                }
+            }
+            productOrder.setItems(items);
         }
 
         ProductOrder savedProductOrder = productOrderRepository.save(productOrder);
         return new ResponseEntity<>(savedProductOrder, HttpStatus.OK);
     }
-
 
 
     @GetMapping(path = "/all")

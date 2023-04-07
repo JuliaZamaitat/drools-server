@@ -1,0 +1,19 @@
+//package rules;
+//dialect  "mvel"
+//
+//
+//import java.util.Set;
+//import java.util.HashSet;
+//import POHandling.models.ProductOrder;
+//import POHandling.models.Item;
+//
+//
+//rule "Item Availability Rule"
+//when
+//    $order: ProductOrder($items: items)
+//    $item: Item($quantity: quantity, $name: name) from $items
+//    $itemStock: ItemStock(name == $name, $stock: stock)
+//    eval($stock >= $quantity * $order.getItemQuantity($item))
+//then
+//    $order.setAvailable(false);
+//end
