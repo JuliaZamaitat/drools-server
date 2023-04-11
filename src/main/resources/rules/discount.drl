@@ -1,0 +1,19 @@
+package rules;
+import POHandling.models.ProductOrder;
+import POHandling.models.Item;
+
+rule "apply 10% discount to all items over 100,00€ in an order"
+when
+    $order : ProductOrder()
+    $item  : Item( price > 100 ) from $order.items
+then
+    System.out.println("Discount Rule triggered!");
+
+    // Calculate the discounted value
+    double discountedValue = $item.getPrice() * 0.9; // 10% discount
+    // Apply the discounted value to the item
+    $item.setPrice(discountedValue);
+    System.out.printf("Applied 10%% discount to item with ID %s in order with ID %s. New item value: US$ %.2f%n", $item.getId(), $order.getId(), discountedValue);
+    // Update the working memory to ensure rule re-evaluation with the new value
+    update($item);
+end

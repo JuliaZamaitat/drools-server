@@ -1,5 +1,6 @@
 package POHandling.controller;
 
+import POHandling.models.Item;
 import POHandling.models.ProductOrder;
 import POHandling.repository.ProductOrderRepository;
 import org.kie.api.KieServices;
@@ -27,14 +28,18 @@ public class RuleController {
         kieContainer = kieServices.getKieClasspathContainer();
     }
 
-    @PostMapping("/{orderId}/workingDayRule")
+    @PostMapping("/{orderId}/fireRules")
     public ResponseEntity<?> executeWorkingDayRule(@PathVariable Integer orderId, @RequestParam Set<String> workingDays,  @RequestParam Set<String> holidays) {
         Optional<ProductOrder> productOrder = productOrderRepository.findById(orderId);
         if (productOrder.isPresent()){
+            ProductOrder PO = productOrder.get();
             KieSession kieSession = kieContainer.newKieSession("ksession-rules");
             kieSession.setGlobal("workingDays", workingDays);
             kieSession.setGlobal("holidays", holidays);
-            kieSession.insert(productOrder.get());
+            kieSession.insert(PO);
+            for (Item item : PO.getItems()) {
+                kieSession.insert(item);
+            }
             kieSession.fireAllRules();
             kieSession.dispose();
             productOrderRepository.save(productOrder.get());
@@ -43,4 +48,5 @@ public class RuleController {
             return new ResponseEntity<>("Product Order not found", HttpStatus.BAD_REQUEST);
         }
     }
+
 }
