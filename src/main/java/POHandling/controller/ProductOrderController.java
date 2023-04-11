@@ -96,7 +96,8 @@ public class ProductOrderController {
     public ResponseEntity<?> updateProductOrder(@PathVariable Integer productOrderId,
                                                      @RequestBody ProductOrder updatedProductOrder,
                                                      @RequestParam(required = false) Integer clientId,
-                                                     @RequestParam(required = false) Integer deliveryAddressId) {
+                                                     @RequestParam(required = false) Integer deliveryAddressId,
+                                                    @RequestParam(required = false) List<Integer> itemIds) {
         Optional<ProductOrder> productOrderOptional = productOrderRepository.findById(productOrderId);
         if (!productOrderOptional.isPresent()) {
             return new ResponseEntity<>("ProductOrder not found", HttpStatus.NOT_FOUND);
@@ -125,8 +126,19 @@ public class ProductOrderController {
             }
         }
 
-        if (updatedProductOrder.getItems() != null) {
-            productOrder.setItems(updatedProductOrder.getItems());
+        if (itemIds != null) {
+            List<Item> items = new ArrayList<>();
+            for (Integer itemId : itemIds) {
+                Optional<Item> itemOptional = itemRepository.findById(itemId);
+                if (itemOptional.isPresent()) {
+                    Item item = itemOptional.get();
+                    item.setProductOrder(productOrder); // Set the ProductOrder field in each Item object
+                    items.add(item);
+                } else {
+                    return new ResponseEntity<>("Item not found", HttpStatus.BAD_REQUEST);
+                }
+            }
+            productOrder.setItems(items);
         }
 
         ProductOrder savedProductOrder = productOrderRepository.save(productOrder);
